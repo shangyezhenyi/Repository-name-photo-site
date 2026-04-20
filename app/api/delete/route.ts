@@ -12,7 +12,7 @@ const client = new S3Client({
 export async function POST(req: Request) {
   try {
     const { key } = await req.json()
-    if (!key) return Response.json({ error: "缺少 key" }, { status: 400 })
+    if (!key) return Response.json({ error: "missing key" }, { status: 400 })
 
     await client.send(
       new DeleteObjectCommand({
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     return Response.json({ success: true })
   } catch (err) {
-    console.log(err)
+    console.log("DELETE ERROR:", err)
     return Response.json({ error: String(err) }, { status: 500 })
   }
 }

@@ -1,0 +1,10 @@
+{
+    "version": 3,
+    "builds": [
+      { "src": "package.json", "use": "@vercel/next" }
+    ],
+    "routes": [
+      { "src": "/gallery", "dest": "/gallery" },
+      { "src": "/api/(.*)", "dest": "/api/$1" }
+    ]
+  }

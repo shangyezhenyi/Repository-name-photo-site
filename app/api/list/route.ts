@@ -16,18 +16,22 @@ export async function GET(req: Request) {
     const limit = Number(url.searchParams.get("limit") || 20)
 
     const res = await client.send(
-      new ListObjectsV2Command({ Bucket: process.env.R2_BUCKET! })
+      new ListObjectsV2Command({
+        Bucket: process.env.R2_BUCKET!,
+      })
     )
 
-    const allFiles = res.Contents?.map((item) => item.Key!).filter(Boolean) || []
-    allFiles.reverse() // 最新在前
+    const allFiles = res.Contents?.filter(item => item.Key).map(item => ({
+      key: item.Key!,
+      url: `${process.env.R2_PUBLIC_DOMAIN}/${item.Key}`,
+    })) || []
 
-    const pagedFiles = allFiles.slice((page - 1) * limit, page * limit)
-    const files = pagedFiles.map((key) => `${process.env.R2_PUBLIC_DOMAIN}/${key}`)
+    const start = (page - 1) * limit
+    const files = allFiles.slice(start, start + limit)
 
     return Response.json({ files })
   } catch (err) {
-    console.log(err)
+    console.log("LIST ERROR:", err)
     return Response.json({ error: String(err) }, { status: 500 })
   }
 }

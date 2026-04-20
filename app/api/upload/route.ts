@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData()
     const file = formData.get("file") as File
-    if (!file) return Response.json({ error: "请选择文件" }, { status: 400 })
+    if (!file) return Response.json({ error: "missing file" }, { status: 400 })
 
     const key = `${Date.now()}-${file.name}`
 
@@ -28,9 +28,9 @@ export async function POST(req: Request) {
 
     const url = `${process.env.R2_PUBLIC_DOMAIN}/${key}`
 
-    return Response.json({ url, key })
+    return Response.json({ key, url })
   } catch (err) {
-    console.log(err)
+    console.log("UPLOAD ERROR:", err)
     return Response.json({ error: String(err) }, { status: 500 })
   }
 }
